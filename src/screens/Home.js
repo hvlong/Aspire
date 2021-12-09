@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { View, Text, Image, Animated, Dimensions, TouchableOpacity, SafeAreaView, StyleSheet } from "react-native";
+import { View, Text, Image, Animated, Dimensions, TouchableOpacity, SafeAreaView, StyleSheet, Switch } from "react-native";
 import SlidingUpPanel from 'rn-sliding-up-panel';
 import * as Images from '../constants';
+import BottomTabs from '../components/BottomTabs';
 
 const height = Dimensions.get('window').height
 
@@ -15,6 +16,7 @@ const panelMenu = [
 ]
 export default function Home() {
   const [showcard, setShowCard] = useState(true)
+  const [isDebitEnabled, setIsDebitEnabled] = useState(false)
 
   const draggableRange = {
     top: height - 150,
@@ -22,7 +24,6 @@ export default function Home() {
   };
   return (
     <View style={styles.container}>
-
       <SafeAreaView style={styles.headerLogoContainer}>
         <Image source={Images.LOGO} style={{ height: 20, width: 20 }} />
       </SafeAreaView>
@@ -46,9 +47,9 @@ export default function Home() {
 
         <View style={styles.panleContentContainer}>
 
-          <TouchableOpacity  onPress ={()=> setShowCard(!showcard)} style={styles.showCardInfo}>
-            <Image source={showcard ? Images.SHOW : Images.REMOVE} style={{top:5, flexDirection:'row',justifyContent:'center',tintColor:'#01D167',height: 15, width: 12 }} />
-            <Text style={{ left:10, top:5 , textAlign: 'center', color: '#01D167', fontSize: 12, fontWeight: '700' }}>{showcard ? 'Hide Card Number' : 'Show Card Number'}</Text>
+          <TouchableOpacity onPress={() => setShowCard(!showcard)} style={styles.showCardInfo}>
+            <Image source={showcard ? Images.SHOW : Images.REMOVE} style={{ top: 5, flexDirection: 'row', justifyContent: 'center', tintColor: '#01D167', height: 15, width: 12 }} />
+            <Text style={{ left: 10, top: 5, textAlign: 'center', color: '#01D167', fontSize: 12, fontWeight: '700' }}>{showcard ? 'Hide Card Number' : 'Show Card Number'}</Text>
           </TouchableOpacity>
 
           <View style={{ borderRadius: 10, backgroundColor: '#01D167', top: -60, alignSelf: 'center', height: '25%', width: '90%' }}>
@@ -57,46 +58,40 @@ export default function Home() {
               <Image source={Images.ASPIRE_LOGO} style={{ tintColor: 'white', height: 20, width: 70 }} />
             </View>
 
-            <View style={{ marginTop: '5%', marginHorizontal: 10 }}>
+            <View style={{ marginTop: '5%', marginHorizontal: 15 }}>
               <Text style={{ fontSize: 20, color: 'white', fontWeight: '700' }}>Ajaykumar Rajasekaran</Text>
+            </View>
+
+            <View style={{ marginTop: '5%', marginHorizontal: 15 }}>
+              <Text style={{ fontSize: 14, color: 'white', fontWeight: '500' }}>1234 5678 9012 3456</Text>
+            </View>
+
+            <View style={{ marginTop: '5%', marginHorizontal: 15 }}>
+              <Text style={{ fontSize: 14, color: 'white', fontWeight: '500' }}>Thur: 12/20 <Text> CVV:456</Text> </Text>
+            </View>
+
+            <View style={{ paddingTop: 20, flexDirection: 'row', justifyContent: 'flex-end', right: 30 }}>
+              <Image source={Images.VISA_LOGO} style={{ tintColor: 'white', height: 20, width: 60 }} />
             </View>
 
           </View>
 
           <View >
-            <SlidingPanelItem></SlidingPanelItem>
-            <SlidingPanelItem></SlidingPanelItem>
-            <SlidingPanelItem></SlidingPanelItem>
-            <SlidingPanelItem></SlidingPanelItem>
-            <SlidingPanelItem></SlidingPanelItem>
+            <SlidingPanelItem name={panelMenu[0].title} meta={panelMenu[0].meta} img={panelMenu[0].image}></SlidingPanelItem>
+            <SlidingPanelItem name={panelMenu[1].title} meta={panelMenu[1].meta} img={panelMenu[1].image} toggleState={isDebitEnabled} setToggleState ={()=>setIsDebitEnabled(!isDebitEnabled)} ></SlidingPanelItem>
+            <SlidingPanelItem name={panelMenu[2].title} meta={panelMenu[2].meta} img={panelMenu[2].image} toggleState={isDebitEnabled} setToggleState ={()=>setIsDebitEnabled(!isDebitEnabled)}></SlidingPanelItem>
+            <SlidingPanelItem name={panelMenu[3].title} meta={panelMenu[3].meta} img={panelMenu[3].image}></SlidingPanelItem>
+            <SlidingPanelItem name={panelMenu[4].title} meta={panelMenu[4].meta} img={panelMenu[4].image}></SlidingPanelItem>
           </View>
 
         </View>
       </SlidingUpPanel>
 
-      <View style={{ height: '8%',flexDirection: 'row', justifyContent: 'space-evenly', borderTopWidth: 0.5,backgroundColor:'white' }}>
+     
 
-        <View style={{ justifyContent: 'center' }}>
-          <Image source={Images.LOGO} style={{ tintColor:'gray',height: 20, width: 20 }} />
-        </View>
-
-        <View style={{ justifyContent: 'center' }}>
-          <Image source={Images.CARD} style={{ tintColor:'#01D167',height: 20, width: 20 }} />
-        </View>
-
-        <View style={{ justifyContent: 'center' }}>
-          <Image source={Images.PAYMENTS} style={{ tintColor:'gray',height: 20, width: 20 }} />
-        </View>
-
-        <View style={{ justifyContent: 'center' }}>
-          <Image source={Images.CREDIT} style={{ tintColor:'gray',height: 20, width: 20 }} />
-        </View>
-
-        <View style={{ justifyContent: 'center' }}>
-          <Image source={Images.ACCOUNT} style={{ tintColor:'gray',height: 20, width: 20 }} />
-        </View>
-
-      </View>
+        <BottomTabs />
+       
+     
 
     </View>
   );
@@ -105,16 +100,41 @@ export default function Home() {
 
 
 
-const SlidingPanelItem = () => {
+const SlidingPanelItem = ({toggleState,setToggleState,...props}) => {
+  let check ="weekly spending limit"
   return (
-    <View style={{ flexDirection: 'row', marginBottom:50, marginHorizontal:20 }}>
-      <Image source={Images.INSIGHT} style={{ height: 30, width: 30 }} />
-      <View style={{marginLeft:10,}}>
-        <Text style={{ fontSize: 16 }}>Top-up-account</Text>
-        <Text style={{ color: 'gray',fontSize:12 }}>Deposit money to your account to use with card</Text>
-      </View>
+    <View style={{flexDirection:'row', justifyContent:'space-between'}}>
+        <View style={{ flexDirection: 'row', marginBottom: 50, marginHorizontal: 20 }}>
+          <View>
+            <Image source={props.img} style={{ height: 30, width: 30 }} />
+          </View>
+          
+
+          <View style={{ marginLeft: 10, }}>
+            <Text style={{ fontSize: 16 }}>{props.name}</Text>
+            <Text style={{ color: 'gray', fontSize: 12 }}>{props.meta}</Text>
+          </View >
+
+         </View>
+
+        { setToggleState  &&
+          <View >
+          <Switch
+            style={{ transform: [{ scaleX: .6 }, { scaleY: .6 }] }}
+            trackColor={{ false: 'pink', true: '#0C365A' }}
+            thumbColor={toggleState ? 'white' : 'white'}
+            ios_backgroundColor="white"
+            onValueChange={setToggleState}
+            value={toggleState}
+          />
+        </View>
+        }
+         
+      
     </View>
+    
   )
+  
 
 
 }
@@ -130,9 +150,6 @@ const styles = StyleSheet.create({
   currencyContainer: { flexDirection: 'row', marginTop: 10, paddingLeft: 20 },
   currencySymbol: { paddingHorizontal: 8, borderRadius: 5, backgroundColor: '#01D167', justifyContent: 'center' },
   panleContentContainer: { flex: 2, borderWidth: 1, backgroundColor: 'white', borderTopLeftRadius: 20, borderTopRightRadius: 20 },
-  showCardInfo: { flexDirection:'row',borderRadius: 10, backgroundColor: 'white', justifyContent: 'center', position: 'absolute', right: 20, top: -85, height: 40, width: '40%' }
-
-
-
+  showCardInfo: { flexDirection: 'row', borderRadius: 10, backgroundColor: 'white', justifyContent: 'center', position: 'absolute', right: 20, top: -85, height: 40, width: '40%' }
 
 })
