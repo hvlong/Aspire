@@ -16,6 +16,7 @@ export default function WeeklyLimit(props) {
     const loading = useSelector((state) => state.userExpenseReducer.loading)
     const userExpenseInfoData = useSelector((state) => state.userExpenseReducer.expenseDetails).map((item, index) => { return { "month": item.month, "expense": item.expense, "fill": 'green' } })
     const userCategoryInfo = useSelector((state) => state.userExpenseReducer.categoryInfo)
+    const weeklyLimit = useSelector((state) => state.userExpenseReducer.weeklyLimit)
 
     const getExpenseHistoryFromAPI =  () => {
                 store.dispatch({
@@ -25,7 +26,7 @@ export default function WeeklyLimit(props) {
     }
 
     const getExpenseCategoryFromAPI = async () => {
-                dispatch({
+                store.dispatch({
                     type: 'FETCH_USER_EXPENSE_CATEGORY_INFO',
                 })
     }
@@ -34,6 +35,15 @@ export default function WeeklyLimit(props) {
         getExpenseHistoryFromAPI();
         getExpenseCategoryFromAPI();
     }, [])
+
+    const save=(value)=>{
+        dispatch({
+            type: 'SET_WEEKLY_LIMIT',
+            WeeklyLimitValue:value
+        })
+
+        Alert.alert('success','Weekly Limit Updated Successfully')
+    }
 
     return (
         <View style={styles.container}>
@@ -87,7 +97,7 @@ export default function WeeklyLimit(props) {
                 </View>
 
                 <View style={{ flex: 1, marginHorizontal: 10 }}>
-                    {loading ? <ActivityIndicator size="large" color="red" /> :
+                    {loading ? <ActivityIndicator size="large" color="#20D167" /> :
                         <ScrollView>
                             <Text numberOfLines={2} style={{marginLeft:10, fontSize: 16, fontWeight: 'bold' }}>Your Expense Graph For Last 6 months </Text>
                             <View style={{  top:-20,justifyContent: 'center', alignItems: 'center' }}>
@@ -119,7 +129,7 @@ export default function WeeklyLimit(props) {
 
 
                 <SafeAreaView style={{ height: Platform.OS === 'android' ? '7%' : '10%', bottom: Platform.OS === 'android' ? 3 : 10, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', backgroundColor: 'white' }}>
-                    <TouchableOpacity style={{ width: Dimensions.get('window').width / 1.5, bottom: Platform.OS === 'android' ? 10 : 0, backgroundColor: '#20D167', borderRadius: 10, height: '100%', justifyContent: 'center', alignItems: 'center' }}>
+                    <TouchableOpacity disabled={currency !== null ? false : true } onPress={()=> save(currency)}style={{ width: Dimensions.get('window').width / 1.5, bottom: Platform.OS === 'android' ? 10 : 0, backgroundColor: '#20D167', borderRadius: 10, height: '100%', justifyContent: 'center', alignItems: 'center' }}>
                         <Text style={{ color: 'white', fontSize: 16, fontWeight: 'bold' }}>Save</Text>
                     </TouchableOpacity>
 

@@ -19,17 +19,6 @@ export function getExpenseHistoryFromAPI ()  {
       })
           
     }
-      // .catch(error => {
-      //     dispatch({
-      //         type: 'FETCH_EXPENSE_FAILED',
-      //     })
-      //     Alert.alert('Error', 'unable to fetch category info')
-      // })
-
-      // type: 'FETCH_EXPENSE_SUCCESS',
-      // payload: { expenseInfo: json.expense_info }
-
-
 
 
 export function getExpenseCategoryFromAPI ()  {

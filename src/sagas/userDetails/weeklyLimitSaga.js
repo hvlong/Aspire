@@ -13,7 +13,6 @@ import {
 function* getExpenseInfo() {
     
     try {
-        // yield put({ type: 'CARD_INFO_REQUEST' });
         const expenseInfo = yield call(getExpenseHistoryFromAPI);
         yield put({ type: 'FETCH_EXPENSE_SUCCESS', expenseInfo: expenseInfo,loading:false });
     } catch (error) {
@@ -25,12 +24,17 @@ function* getExpenseInfo() {
 function* getCategoryInfo() {
     
     try {
-        // yield put({ type: 'CARD_INFO_REQUEST' });
         const categoryInfo = yield call(getExpenseCategoryFromAPI);
         yield put({ type: 'FETCH_CATEGORYINFO_SUCCESS', categoryInfo: categoryInfo,loading:false });
     } catch (error) {
         yield put({ type: 'FETCH_EXPENSE_FAILED', error: true });
     }
+}
+
+function* setWeelyLimitValue(action){
+  console.warn('action is',action.WeeklyLimitValue);
+  yield put({ type: 'SET_WEEKLY_LIMIT_SUCCESS', WeeklyLimitValue: action.WeeklyLimitValue, });
+
 }
 
 
@@ -42,5 +46,10 @@ export function* userExpenseHistory() {
 
 export function* userExpenseCategoryInfo() {
     yield takeLatest('FETCH_USER_EXPENSE_CATEGORY_INFO', getCategoryInfo);
-  }
+}
+
+export function* userWeekLyLimitValue() {
+  yield takeLatest('SET_WEEKLY_LIMIT', setWeelyLimitValue);
+}
+
   

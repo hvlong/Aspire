@@ -1,6 +1,7 @@
 import { TabRouter } from "@react-navigation/native"
 
 let defaultState = {
+    weeklyLimit:'5000',
     loading: true,
     expenseDetails: [],
     categoryInfo:[],
@@ -32,6 +33,14 @@ let userExpenseReducer = (state = defaultState, action) => {
                 ...state,
                 loading: false,
                 error: true
+            }
+        }
+
+        case 'SET_WEEKLY_LIMIT_SUCCESS': {
+            // console.warn('SET_WEEKLY_LIMIT_SUCCESS', action.WeeklyLimitValue)
+            return {
+                ...state,
+                weeklyLimit: action.WeeklyLimitValue,
             }
         }
 

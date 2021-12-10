@@ -23,9 +23,10 @@ export default function Home({ navigation }) {
   const dispatch = useDispatch();
   const [showcard, setShowCard] = useState(true)
   const [isDebitEnabled, setIsDebitEnabled] = useState(false)
-  const[weeklyLimit,setWeeklyLimit]=useState(5000)
+  // const[weeklyLimit,setWeeklyLimit]=useState(5000)
   const loading = useSelector((state) => state.userInforReducer.loading)
   const userCardInfo = useSelector((state) => state.userInforReducer.userDetails)
+  const weeklyLimit = useSelector((state) => state.userExpenseReducer.weeklyLimit)
 
   const getUserInfoFromAPI = async () => {
     
