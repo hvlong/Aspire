@@ -89,8 +89,12 @@
   - The second one, whihc is a pie chart represents the user's last 6 months category of expense.
 - At the bottom of the page is a button which allows the user to save the weekly limit. The save button is disabled by default. The updated weekly limit
   will be saved on clicking the save button and will update on the debit screen.
+  
+  
+  
 
   
-  
+  ![aspire](https://user-images.githubusercontent.com/47854133/145645410-320f0f7f-8093-440f-93e1-9959b29309b3.gif)
+
 
 
