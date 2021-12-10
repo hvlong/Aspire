@@ -1,18 +1,64 @@
-import React, { useState,useEffect } from 'react'
-import { View, Text, StyleSheet, Platform, Image, SafeAreaView, Dimensions, ScrollView, TouchableOpacity } from 'react-native'
+import React, { useState, useEffect } from 'react'
+import { View, Text, StyleSheet, Platform, Image, SafeAreaView, Dimensions, ScrollView, TouchableOpacity, Alert, ActivityIndicator } from 'react-native'
 import Constants from 'expo-constants';
 import { LIMIT } from '../constants';
 import { LineChart, } from 'react-native-chart-kit'
 import { VictoryPie } from "victory-native";
+import { useDispatch } from 'react-redux'
+import { useSelector } from 'react-redux'
 
 
 const statusBarHeight = Constants.statusBarHeight
 
 export default function WeeklyLimit() {
+    const dispatch = useDispatch();
     const [currency, setCurrency] = useState(null)
+    const loading = useSelector((state) => state.userExpenseReducer.loading)
+    const userExpenseInfoLabels = useSelector((state) => state.userExpenseReducer.expenseDetails).map((item, index) => { return item.month })
+    const userExpenseInfoData = useSelector((state) => state.userExpenseReducer.expenseDetails).map((item, index) => { return item.expense })
+    const userCategoryInfo = useSelector((state) => state.userExpenseReducer.categoryInfo)
 
-    useEffect(() => {console.warn('uf1')})
-    useEffect(() => {console.warn('uf2')})
+    const getExpenseHistoryFromAPI = async () => {
+        const url = "https://bc6efa5e-56e8-48eb-a6ce-ceea56d12c21.mock.pstmn.io/v1/users/1/expenseinfo?mon=last_six";
+        return await fetch(url)
+            .then(res => res.json())
+            .then(json =>
+                dispatch({
+                    type: 'FETCH_EXPENSE_SUCCESS',
+                    payload: { expenseInfo: json.expense_info }
+                })
+            )
+            .catch(error => {
+                dispatch({
+                    type: 'FETCH_EXPENSE_FAILED',
+                })
+                Alert.alert('Error', 'Something went wrong')
+            })
+    }
+
+    const getExpenseCategoryFromAPI = async () => {
+        const url = "https://bc6efa5e-56e8-48eb-a6ce-ceea56d12c21.mock.pstmn.io/v1/users/1/expensecategories?mon=last-six";
+        return await fetch(url)
+            .then(res => res.json())
+            .then(json =>
+                dispatch({
+                    type: 'FETCH_CATEGORYINFO_SUCCESS',
+                    payload: { categoryInfo: json.categories_info }
+                })
+            )
+            .catch(error => {
+                dispatch({
+                    type: 'FETCH_EXPENSE_FAILED',
+                })
+                Alert.alert('Error', 'unable to fetch category info')
+            })
+    }
+
+    useEffect(() => {
+        getExpenseHistoryFromAPI();
+        getExpenseCategoryFromAPI();
+    }, [])
+
     return (
         <View style={styles.container}>
 
@@ -65,21 +111,14 @@ export default function WeeklyLimit() {
                 </View>
 
                 <View style={{ flex: 1, marginHorizontal: 10 }}>
+                    {loading ? <ActivityIndicator size="large" color="red" /> :
                     <ScrollView>
                         <Text style={{  fontSize: 16, fontWeight: 'bold' }}>Your Expense Graph For Last 6 months </Text>
                         <LineChart
                             data={{
-                                labels: ['July', 'Aug', 'Sep', 'Oct', 'Nov','Dec'],
+                                labels: userExpenseInfoLabels,
                                 datasets: [{
-                                    data: [
-                                        6,
-                                        8,
-                                        12,
-                                        4,
-                                        10,
-                                        8
-                                    ],
-                                    
+                                    data: userExpenseInfoData
                                 }]
                             }}
 
@@ -109,32 +148,29 @@ export default function WeeklyLimit() {
                                 // width={Dimensions.get('window').width - 50}
                                 width={Dimensions.get('window').width - 100}
                                 colorScale={"cool"}
-                                data={[
-                                    { label: "Food", y: 55 },
-                                    { label: "Education", y: 40 },
-                                    { label: "Beauty", y: 55 },
-                                    { label: "Medical", y: 55 },
-                                    { label: "Other", y: 55 }
-                                ]}
+                                data={userCategoryInfo}
                             />
                         </View>
 
 
                     </ScrollView>
-
+                    }
+                    
                 </View>
 
 
+                <SafeAreaView style={{ height: Platform.OS === 'android' ? '7%' : '10%', bottom:10,flexDirection: 'row', justifyContent:'center',alignItems:'center',backgroundColor: 'white' }}>
+                        <TouchableOpacity style={{ width: Dimensions.get('window').width / 1.5, bottom: Platform.OS === 'android' ? 10 : 0, backgroundColor: '#20D167', borderRadius: 10, height: '100%', justifyContent: 'center', alignItems: 'center' }}>
+                            <Text style={{ color: 'white', fontSize: 16, fontWeight: 'bold' }}>Save</Text>
+                        </TouchableOpacity>
 
+                    </SafeAreaView>
 
             </View>
 
-            <SafeAreaView style={{ height: Platform.OS === 'android' ? '7%' : '10%', flexDirection: 'row', justifyContent: 'space-evenly', backgroundColor: 'white' }}>
-                <TouchableOpacity style={{ width: Dimensions.get('window').width / 1.5, bottom: Platform.OS === 'android' ? 20 : 0, top: 10, backgroundColor: '#20D167', borderRadius: 10, height: '100%', justifyContent: 'center', alignItems: 'center' }}>
-                    <Text style={{ color: 'white', fontSize: 16, fontWeight: 'bold' }}>Save</Text>
-                </TouchableOpacity>
+            
 
-            </SafeAreaView>
+
 
 
         </View>
