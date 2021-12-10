@@ -63,7 +63,7 @@ export default function WeeklyLimit() {
         <View style={styles.container}>
 
             <SafeAreaView style={styles.header}>
-                <Text style={{ margin: 20, fontSize: 20, fontWeight: 'bold', color: "#FFFFFF" }}> Spending Limit</Text>
+                <Text style={{ marginVertical:Platform.OS === 'android' ? 40 : 20,marginHorizontal: 20, fontSize: 20, fontWeight: 'bold', color: "#FFFFFF" }}> Spending Limit</Text>
             </SafeAreaView>
 
             <View style={styles.panel}>
@@ -159,7 +159,7 @@ export default function WeeklyLimit() {
                 </View>
 
 
-                <SafeAreaView style={{ height: Platform.OS === 'android' ? '7%' : '10%', bottom:10,flexDirection: 'row', justifyContent:'center',alignItems:'center',backgroundColor: 'white' }}>
+                <SafeAreaView style={{ height: Platform.OS === 'android' ? '7%' : '10%', bottom:Platform.OS === 'android' ? 3 : 10,flexDirection: 'row', justifyContent:'center',alignItems:'center',backgroundColor: 'white' }}>
                         <TouchableOpacity style={{ width: Dimensions.get('window').width / 1.5, bottom: Platform.OS === 'android' ? 10 : 0, backgroundColor: '#20D167', borderRadius: 10, height: '100%', justifyContent: 'center', alignItems: 'center' }}>
                             <Text style={{ color: 'white', fontSize: 16, fontWeight: 'bold' }}>Save</Text>
                         </TouchableOpacity>
@@ -180,7 +180,7 @@ export default function WeeklyLimit() {
 
 
 const styles = StyleSheet.create({
-    container: { flex: 1, marginTop: Platform.OS === 'android' ? statusBarHeight : 0, backgroundColor: '#0C365A' },
+    container: { flex: 1, backgroundColor: '#0C365A' },
     header: { flex: 1, top: statusBarHeight * 2, backgroundColor: '#0C365A' },
     panel: { flex: 4, backgroundColor: '#FFFFFF', borderTopStartRadius: 20, borderTopEndRadius: 20 },
     currencyContainer: { flexDirection: 'row', marginTop: 0, paddingVertical: 10 },
