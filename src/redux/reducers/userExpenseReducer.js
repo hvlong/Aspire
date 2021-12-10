@@ -1,4 +1,3 @@
-import { TabRouter } from "@react-navigation/native"
 
 let defaultState = {
     weeklyLimit:'5000',

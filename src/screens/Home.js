@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, Image, Animated, Dimensions, TouchableOpacity, SafeAreaView, StyleSheet, Switch, Platform, ActivityIndicator,Alert } from "react-native";
+import { View, Text, Image, Animated, Dimensions, TouchableOpacity, SafeAreaView, StyleSheet, Switch, Platform, ActivityIndicator, Alert } from "react-native";
 import SlidingUpPanel from 'rn-sliding-up-panel';
 import * as Images from '../constants';
 import BottomTabs from '../components/BottomTabs';
 import Constants from 'expo-constants';
 import { useDispatch } from 'react-redux'
 import { useSelector } from 'react-redux'
-import {store} from '../redux/store'
+import { store } from '../redux/store'
 const statusBarHeight = Constants.statusBarHeight
 
 const height = Dimensions.get('window').height
@@ -27,16 +27,16 @@ export default function Home({ navigation }) {
   const loading = useSelector((state) => state.userInforReducer.loading)
   const userCardInfo = useSelector((state) => state.userInforReducer.userDetails)
   const weeklyLimit = useSelector((state) => state.userExpenseReducer.weeklyLimit)
-
+  const error = useSelector((state) => state.userInforReducer.error)
   const getUserInfoFromAPI = async () => {
-    
-        store.dispatch({
-          type: 'FETCH_USER_CARD_INFO',
-        })
+
+    store.dispatch({
+      type: 'FETCH_USER_CARD_INFO',
+    })
   }
 
   useEffect(() => {
-   getUserInfoFromAPI();
+    getUserInfoFromAPI();
   }, [])
 
 
@@ -45,18 +45,18 @@ export default function Home({ navigation }) {
     bottom: height / 1.5
   };
   return (
+
     <View style={styles.container}>
       <SafeAreaView style={styles.walletInfoContainer}>
         <Text style={styles.debitCardText}> Debit Card </Text>
         <Text style={styles.avlBalanceText}> Available  Balance</Text>
-        {/* {console.warn(userCardInfo[0])} */}
         <View style={styles.currencyContainer}>
           <View style={styles.currencySymbol}>
-          <Text style={{ color: 'white', fontSize: 14, fontWeight: 'bold' }}>S$</Text>
+            <Text style={{ color: 'white', fontSize: 14, fontWeight: 'bold' }}>S$</Text>
           </View >
 
           <View>
-            <Text style={{ color: 'white', fontSize: 20, fontWeight: '700' }}>{loading ?'':`  3,000 / ${weeklyLimit}`}<Text style={{fontSize:12,color:'gray'}}> (weekly limit)</Text></Text>
+            <Text style={{ color: 'white', fontSize: 20, fontWeight: '700' }}>{loading ? '' : `  3,000 / ${weeklyLimit}`}<Text style={{ fontSize: 12, color: 'gray' }}> (weekly limit)</Text></Text>
           </View>
         </View>
       </SafeAreaView>
@@ -65,14 +65,13 @@ export default function Home({ navigation }) {
 
         <View style={styles.panleContentContainer}>
 
-          <TouchableOpacity disabled={loading} onPress={() => setShowCard(!showcard)}  style={styles.showCardInfo}>
+          <TouchableOpacity disabled={loading} onPress={() => setShowCard(!showcard)} style={styles.showCardInfo}>
             <Image source={showcard ? Images.SHOW : Images.REMOVE} style={{ top: 5, flexDirection: 'row', justifyContent: 'center', tintColor: '#01D167', height: 15, width: 12 }} />
             <Text style={{ left: 10, top: 5, textAlign: 'center', color: '#01D167', fontSize: 12, fontWeight: '700' }}>{!showcard ? 'Hide Card Number' : 'Show Card Number'}</Text>
           </TouchableOpacity>
 
           <View style={{ borderRadius: 10, backgroundColor: '#01D167', top: -60, alignSelf: 'center', height: '25%', width: '90%' }}>
-
-            {loading ?<View ><ActivityIndicator style={{marginTop:'25%'}} size="small" color="#0C365A'" /></View>  :
+            {loading ? <View ><ActivityIndicator style={{ marginTop: '25%' }} size="small" color="#0C365A'" /></View> :
               <View>
                 <View style={{ paddingTop: 20, flexDirection: 'row', justifyContent: 'flex-end', right: 30 }}>
                   <Image source={Images.ASPIRE_LOGO} style={{ tintColor: 'white', height: 20, width: 70 }} />
@@ -94,6 +93,7 @@ export default function Home({ navigation }) {
                   <Image source={Images.VISA_LOGO} style={{ tintColor: 'white', height: 20, width: 60 }} />
                 </View>
               </View>
+
             }
 
 
@@ -112,11 +112,14 @@ export default function Home({ navigation }) {
 
 
 
-      <BottomTabs/>
+      <BottomTabs />
 
 
 
     </View>
+
+
+
   );
 }
 

@@ -14,6 +14,9 @@ function* getCardInfo() {
     try {
         yield put({ type: 'CARD_INFO_REQUEST' });
         const cardInfo = yield call(getUserCardDetails);
+        if (cardInfo === undefined) {
+          yield put({ type: 'FETCH_USER_DETAILS_FAILED', error: true });
+        }
         yield put({ type: 'FETCH_USER_DETAILS_SUCCESS', userinfo: cardInfo,loading:false });
     } catch (error) {
         yield put({ type: 'FETCH_USER_DETAILS_FAILED', error: true });
