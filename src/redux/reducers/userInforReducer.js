@@ -8,18 +8,18 @@ let userInforReducer = (state = defaultState, action) => {
     switch (action.type) {
         
         case 'FETCH_USER_DETAILS_SUCCESS': {
-            let newState = { ...state }
-            // console.warn("REMOVE TO CART")
-            newState.userDetails = action.payload.userinfo
-            newState.loading = false
-            return newState
+            return {
+                ...state,
+                userDetails:action.userinfo,
+                loading:  action.loading,
+              };
         }
 
         case 'FETCH_USER_DETAILS_FAILED': {
-            let newState = { ...state }
-            // console.warn("REMOVE TO CART")
-            newState.error = true
-            return newState
+            return {
+                ...state,
+                error:  true,
+              };
         }
 
         default:

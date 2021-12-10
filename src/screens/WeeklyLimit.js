@@ -2,56 +2,32 @@ import React, { useState, useEffect } from 'react'
 import { View, Text, StyleSheet, Platform, Image, SafeAreaView, Dimensions, ScrollView, TouchableOpacity, Alert, ActivityIndicator } from 'react-native'
 import Constants from 'expo-constants';
 import { LIMIT } from '../constants';
-import { LineChart, } from 'react-native-chart-kit'
-import { VictoryPie } from "victory-native";
+import { VictoryPie, VictoryChart, VictoryTheme, VictoryBar } from "victory-native";
 import { useDispatch } from 'react-redux'
 import { useSelector } from 'react-redux'
+import {store} from '../redux/store'
 
 
 const statusBarHeight = Constants.statusBarHeight
 
-export default function WeeklyLimit() {
+export default function WeeklyLimit(props) {
     const dispatch = useDispatch();
     const [currency, setCurrency] = useState(null)
     const loading = useSelector((state) => state.userExpenseReducer.loading)
-    const userExpenseInfoLabels = useSelector((state) => state.userExpenseReducer.expenseDetails).map((item, index) => { return item.month })
-    const userExpenseInfoData = useSelector((state) => state.userExpenseReducer.expenseDetails).map((item, index) => { return item.expense })
+    const userExpenseInfoData = useSelector((state) => state.userExpenseReducer.expenseDetails).map((item, index) => { return { "month": item.month, "expense": item.expense, "fill": 'green' } })
     const userCategoryInfo = useSelector((state) => state.userExpenseReducer.categoryInfo)
 
-    const getExpenseHistoryFromAPI = async () => {
-        const url = "https://bc6efa5e-56e8-48eb-a6ce-ceea56d12c21.mock.pstmn.io/v1/users/1/expenseinfo?mon=last_six";
-        return await fetch(url)
-            .then(res => res.json())
-            .then(json =>
-                dispatch({
-                    type: 'FETCH_EXPENSE_SUCCESS',
-                    payload: { expenseInfo: json.expense_info }
+    const getExpenseHistoryFromAPI =  () => {
+                store.dispatch({
+                    type: 'FETCH_USER_EXPENSE_HISTORY_INFO',
                 })
-            )
-            .catch(error => {
-                dispatch({
-                    type: 'FETCH_EXPENSE_FAILED',
-                })
-                Alert.alert('Error', 'Something went wrong')
-            })
+            
     }
 
     const getExpenseCategoryFromAPI = async () => {
-        const url = "https://bc6efa5e-56e8-48eb-a6ce-ceea56d12c21.mock.pstmn.io/v1/users/1/expensecategories?mon=last-six";
-        return await fetch(url)
-            .then(res => res.json())
-            .then(json =>
                 dispatch({
-                    type: 'FETCH_CATEGORYINFO_SUCCESS',
-                    payload: { categoryInfo: json.categories_info }
+                    type: 'FETCH_USER_EXPENSE_CATEGORY_INFO',
                 })
-            )
-            .catch(error => {
-                dispatch({
-                    type: 'FETCH_EXPENSE_FAILED',
-                })
-                Alert.alert('Error', 'unable to fetch category info')
-            })
     }
 
     useEffect(() => {
@@ -63,7 +39,7 @@ export default function WeeklyLimit() {
         <View style={styles.container}>
 
             <SafeAreaView style={styles.header}>
-                <Text style={{ marginVertical:Platform.OS === 'android' ? 40 : 20,marginHorizontal: 20, fontSize: 20, fontWeight: 'bold', color: "#FFFFFF" }}> Spending Limit</Text>
+                <Text style={{ marginVertical: Platform.OS === 'android' ? 40 : 20, marginHorizontal: 20, fontSize: 20, fontWeight: 'bold', color: "#FFFFFF" }}> Spending Limit</Text>
             </SafeAreaView>
 
             <View style={styles.panel}>
@@ -112,68 +88,51 @@ export default function WeeklyLimit() {
 
                 <View style={{ flex: 1, marginHorizontal: 10 }}>
                     {loading ? <ActivityIndicator size="large" color="red" /> :
-                    <ScrollView>
-                        <Text style={{  fontSize: 16, fontWeight: 'bold' }}>Your Expense Graph For Last 6 months </Text>
-                        <LineChart
-                            data={{
-                                labels: userExpenseInfoLabels,
-                                datasets: [{
-                                    data: userExpenseInfoData
-                                }]
-                            }}
+                        <ScrollView>
+                            <Text numberOfLines={2} style={{marginLeft:10, fontSize: 16, fontWeight: 'bold' }}>Your Expense Graph For Last 6 months </Text>
+                            <View style={{  top:-20,justifyContent: 'center', alignItems: 'center' }}>
+                             <VictoryChart domainPadding={10} width={Dimensions.get('window').width - 100} theme={VictoryTheme.material} animate={{
+                                onLoad: { duration: 1000 },
+                                duration: 1000,
+                                easing: "bounce"
+                            }} 
+                            >
+                                <VictoryBar style={{ data: { fill: "#20D167" } }} data={userExpenseInfoData} x="month" y="expense" />
+                            </VictoryChart>
+                            </View>
 
-                            width={Dimensions.get('window').width - 20} // from react-native
-                            height={220}
-                            yAxisLabel="S$"
-                            yAxisSuffix="k"
-                            chartConfig={{
-                                backgroundColor: 'white',
-                                backgroundGradientFrom: '#20D150',
-                                backgroundGradientTo: '#20D167',
-                                decimalPlaces: 1, // optional, defaults to 2dp
-                                color: (opacity = 0.7) => `rgba(255, 255, 255, ${opacity})`,
-                                style: {
-                                    borderRadius: 16
-                                }
-                            }}
-                            bezier
-                            style={{
-                                marginVertical: 8,
-                                borderRadius: 16
-                            }}
-                        />
-                        <Text style={{ paddingTop: 50, fontSize: 16, fontWeight: 'bold' }}> Categories of your expenses for Last 6 months </Text>
-                        <View style={{ top:-50,justifyContent: 'center', alignItems:'center' }}>
-                            <VictoryPie
-                                // width={Dimensions.get('window').width - 50}
-                                width={Dimensions.get('window').width - 100}
-                                colorScale={"cool"}
-                                data={userCategoryInfo}
-                            />
-                        </View>
+                            <Text numberOfLines={2} style={{marginLeft:10, fontSize: 16, fontWeight: 'bold' }}> Categories of your expenses for Last 6 months </Text>
+                                <View style={{ top: -50, justifyContent: 'center', alignItems: 'center' }}>
+                                    <VictoryPie
+                                        // width={Dimensions.get('window').width - 50}
 
-
-                    </ScrollView>
+                                        width={Dimensions.get('window').width - 100}
+                                        colorScale={"cool"}
+                                        data={userCategoryInfo ? userCategoryInfo : [{ y: 0 }]}
+                                    />
+                                </View>
+                            
+                        </ScrollView>
                     }
-                    
+
                 </View>
 
 
-                <SafeAreaView style={{ height: Platform.OS === 'android' ? '7%' : '10%', bottom:Platform.OS === 'android' ? 3 : 10,flexDirection: 'row', justifyContent:'center',alignItems:'center',backgroundColor: 'white' }}>
-                        <TouchableOpacity style={{ width: Dimensions.get('window').width / 1.5, bottom: Platform.OS === 'android' ? 10 : 0, backgroundColor: '#20D167', borderRadius: 10, height: '100%', justifyContent: 'center', alignItems: 'center' }}>
-                            <Text style={{ color: 'white', fontSize: 16, fontWeight: 'bold' }}>Save</Text>
-                        </TouchableOpacity>
+                <SafeAreaView style={{ height: Platform.OS === 'android' ? '7%' : '10%', bottom: Platform.OS === 'android' ? 3 : 10, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', backgroundColor: 'white' }}>
+                    <TouchableOpacity style={{ width: Dimensions.get('window').width / 1.5, bottom: Platform.OS === 'android' ? 10 : 0, backgroundColor: '#20D167', borderRadius: 10, height: '100%', justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ color: 'white', fontSize: 16, fontWeight: 'bold' }}>Save</Text>
+                    </TouchableOpacity>
 
-                    </SafeAreaView>
+                </SafeAreaView>
 
             </View>
 
-            
 
 
 
 
-        </View>
+
+        </View >
     )
 }
 

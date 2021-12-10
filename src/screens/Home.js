@@ -6,6 +6,7 @@ import BottomTabs from '../components/BottomTabs';
 import Constants from 'expo-constants';
 import { useDispatch } from 'react-redux'
 import { useSelector } from 'react-redux'
+import {store} from '../redux/store'
 const statusBarHeight = Constants.statusBarHeight
 
 const height = Dimensions.get('window').height
@@ -22,22 +23,15 @@ export default function Home({ navigation }) {
   const dispatch = useDispatch();
   const [showcard, setShowCard] = useState(true)
   const [isDebitEnabled, setIsDebitEnabled] = useState(false)
+  const[weeklyLimit,setWeeklyLimit]=useState(5000)
   const loading = useSelector((state) => state.userInforReducer.loading)
   const userCardInfo = useSelector((state) => state.userInforReducer.userDetails)
 
   const getUserInfoFromAPI = async () => {
-     const url = "https://bc6efa5e-56e8-48eb-a6ce-ceea56d12c21.mock.pstmn.io/v1/users/1/carinfo";
-      return await fetch(url)
-      .then(res => res.json())
-      .then(json =>
-        dispatch({
-          type: 'FETCH_USER_DETAILS_SUCCESS',
-          payload: { userinfo: json.data }
+    
+        store.dispatch({
+          type: 'FETCH_USER_CARD_INFO',
         })
-      )
-      .catch(error => {
-        Alert.alert('Error', 'Something went wrong')
-      })  
   }
 
   useEffect(() => {
@@ -57,11 +51,11 @@ export default function Home({ navigation }) {
         {/* {console.warn(userCardInfo[0])} */}
         <View style={styles.currencyContainer}>
           <View style={styles.currencySymbol}>
-            <Text style={{ color: 'white', fontSize: 16 }}>s<Text style={{ color: 'white', fontSize: 13 }}>$</Text></Text>
+          <Text style={{ color: 'white', fontSize: 14, fontWeight: 'bold' }}>S$</Text>
           </View >
 
           <View>
-            <Text style={{ color: 'white', fontSize: 20, fontWeight: '700' }}>{loading ?'':'  3,000'}</Text>
+            <Text style={{ color: 'white', fontSize: 20, fontWeight: '700' }}>{loading ?'':`  3,000 / ${weeklyLimit}`}<Text style={{fontSize:12,color:'gray'}}> (weekly limit)</Text></Text>
           </View>
         </View>
       </SafeAreaView>
@@ -70,7 +64,7 @@ export default function Home({ navigation }) {
 
         <View style={styles.panleContentContainer}>
 
-          <TouchableOpacity onPress={() => setShowCard(!showcard)} style={styles.showCardInfo}>
+          <TouchableOpacity disabled={loading} onPress={() => setShowCard(!showcard)}  style={styles.showCardInfo}>
             <Image source={showcard ? Images.SHOW : Images.REMOVE} style={{ top: 5, flexDirection: 'row', justifyContent: 'center', tintColor: '#01D167', height: 15, width: 12 }} />
             <Text style={{ left: 10, top: 5, textAlign: 'center', color: '#01D167', fontSize: 12, fontWeight: '700' }}>{!showcard ? 'Hide Card Number' : 'Show Card Number'}</Text>
           </TouchableOpacity>
@@ -107,7 +101,7 @@ export default function Home({ navigation }) {
           <View >
             <SlidingPanelItem name={panelMenu[0].title} meta={panelMenu[0].meta} img={panelMenu[0].image}></SlidingPanelItem>
             <SlidingPanelItem name={panelMenu[1].title} meta={panelMenu[1].meta} img={panelMenu[1].image} navigateTo={() => navigation.navigate('Limit')} toggleState={isDebitEnabled} setToggleState={() => setIsDebitEnabled(!isDebitEnabled)} ></SlidingPanelItem>
-            <SlidingPanelItem name={panelMenu[2].title} meta={panelMenu[2].meta} img={panelMenu[2].image} toggleState={isDebitEnabled} setToggleState={() => setIsDebitEnabled(!isDebitEnabled)}></SlidingPanelItem>
+            <SlidingPanelItem name={panelMenu[2].title} meta={panelMenu[2].meta} img={panelMenu[2].image} navigateTo={() => Alert.alert('coming soon')} toggleState={isDebitEnabled} setToggleState={() => setIsDebitEnabled(!isDebitEnabled)}></SlidingPanelItem>
             <SlidingPanelItem name={panelMenu[3].title} meta={panelMenu[3].meta} img={panelMenu[3].image}></SlidingPanelItem>
             <SlidingPanelItem name={panelMenu[4].title} meta={panelMenu[4].meta} img={panelMenu[4].image}></SlidingPanelItem>
           </View>
@@ -117,7 +111,7 @@ export default function Home({ navigation }) {
 
 
 
-      <BottomTabs navigation={navigation} />
+      <BottomTabs/>
 
 
 
@@ -180,6 +174,6 @@ const styles = StyleSheet.create({
   currencyContainer: { flexDirection: 'row', marginTop: 10, paddingLeft: 20 },
   currencySymbol: { paddingHorizontal: 8, borderRadius: 5, backgroundColor: '#01D167', justifyContent: 'center' },
   panleContentContainer: { flex: 2, borderWidth: 1, backgroundColor: 'white', borderTopLeftRadius: 20, borderTopRightRadius: 20 },
-  showCardInfo: { flexDirection: 'row', borderRadius: 10, backgroundColor: 'white', justifyContent: 'center', position: 'absolute', right: 20, top: -85, height: 40, width: '40%' }
+  showCardInfo: { flexDirection: 'row', borderRadius: 10, backgroundColor: 'white', justifyContent: 'center', position: 'absolute', right: 20, top: -85, height: 50, width: '40%' }
 
 })

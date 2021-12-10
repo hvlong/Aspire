@@ -12,26 +12,27 @@ let defaultState = {
 let userExpenseReducer = (state = defaultState, action) => {
     switch (action.type) {
         case 'FETCH_EXPENSE_SUCCESS': {
-            let newState = { ...state }
-            // console.warn("REMOVE TO CART")
-            newState.expenseDetails = action.payload.expenseInfo
-            newState.loading = false
-            return newState
+            return {
+                ...state,
+                expenseDetails:action.expenseInfo,
+                loading: false
+            }
         }
 
         case 'FETCH_CATEGORYINFO_SUCCESS': {
-            let newState = { ...state }
-            newState.categoryInfo = action.payload.categoryInfo
-            newState.loading = false
-            return newState
+            return {
+                ...state,
+                categoryInfo:action.categoryInfo,
+                loading: false
+            }
         }
 
         case 'FETCH_EXPENSE_FAILED': {
-            let newState = { ...state }
-            // console.warn("REMOVE TO CART")
-            newStateloading =false
-            newState.error = true
-            return newState
+            return {
+                ...state,
+                loading: false,
+                error: true
+            }
         }
 
         default:

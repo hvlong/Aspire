@@ -7,10 +7,10 @@ import { NavigationContainer } from '@react-navigation/native'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { LOGO } from './src/constants';
 import { Provider } from 'react-redux'
-import configureStore from './src/redux/store'
+import {store} from './src/redux/store'
 
 
-const store = configureStore()
+// const store = store()
 
 export default function RootNavigation() {
     const Stack = createStackNavigator();
